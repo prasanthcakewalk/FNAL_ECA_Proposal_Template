@@ -1,5 +1,7 @@
 \documentclass[11pt]{article}
 
+\input{info}
+
 % default packages
 \usepackage[english]{babel}
 \usepackage[letterpaper,margin=1in]{geometry}
@@ -9,17 +11,45 @@
 \usepackage[table]{xcolor}
 \usepackage{fullpage}
 \usepackage{titlesec}
+\usepackage{lineno}
+\usepackage{csquotes}
 \usepackage{array}
 \usepackage{etoolbox, pdfpages}
+
+\ifdefined\biblatexflag
+% for biblatex (default)
+\usepackage[backend=biber,style=nature,sorting=none,maxbibnames=11]{biblatex}
+\addbibresource{references.bib}
+\else
+% for \thebibliography (flag in info.tex)
 \patchcmd{\thebibliography}{\section *{\refname }}{\section{\refname}\label{sec:biblio}}{}{}
+\fi
+
 \newcommand{\collabletter}[1]{\includepdf[pages=-, pagecommand={\thispagestyle{empty}\rfoot{\thepage}}]{#1}\clearpage}
+
+% blank footnote for Buy America boilerplate
+% https://tex.stackexchange.com/questions/562763/footnote-without-reference
+\let\svthefootnote\thefootnote
+\newcommand\blankfootnote[1]{%
+  \begin{NoHyper}
+    \let\thefootnote\relax\footnotetext{#1}%
+    \let\thefootnote\svthefootnote%
+  \end{NoHyper}
+}
+
 \pdfminorversion=7
 
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
 \setlength{\parskip}{0pt}
+
 \titlespacing*{\section}{0pt}{0pt}{0pt}
 \titleformat{\section}{\normalfont\fontsize{11}{15}\bfseries}{\thesection}{1em}{}
+\titlespacing*{\subsection}{0pt}{0pt}{0pt}
+\titleformat{\subsection}{\normalfont\fontsize{11}{15}\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsubsection}{0pt}{0pt}{0pt}
+\titleformat{\subsubsection}{\normalfont\fontsize{11}{15}\bfseries}{\thesubsubsection}{1em}{}
+
 \setlength{\baselineskip}{13pt}
 
 \input{packages}
@@ -29,12 +59,15 @@
 \begin{document}
 % remove body header from first page
 \thispagestyle{empty}
+\hypersetup{pageanchor=false}
 % header/footer just on cover page
 \AddToShipoutPicture*{\BackgroundPic}
 \pagenumbering{gobble}
 
 \input{base/coverpage}
 \clearpage
+\hypersetup{pageanchor=true}
+
 \ifdefined\tocflag
 \thispagestyle{empty}
 \tableofcontents
@@ -50,6 +83,10 @@
 \setlength{\nsfoffset}{\headheight}
 \addtolength{\nsfoffset}{\baselineskip}
 
+\ifdefined\linenoflag
+\linenumbers
+\fi
+
 % to host your content
 \input{content}
 
@@ -60,7 +97,7 @@
 \input{biblio}
 \clearpage
 
-\section{Facilities and Other Resources}\label{sec:facilities}
+\section{Facilities \& Other Resources}\label{sec:facilities}
 % no limit
 \input{facilities}
 
@@ -69,7 +106,7 @@
 \input{equipment}
 
 \clearpage
-\section{Data Management Plan}\label{sec:dataplan}
+\section{Data Management and Sharing Plan}\label{sec:dataplan}
 % 2 pages max
 \input{dataplan}
 
@@ -78,7 +115,10 @@
 % 1 page max, optional
 \input{synergy}
 
-% Transparency of Foreign Connections: not required for national labs
+\clearpage
+\section{Transparency of Foreign Connections}
+% Transparency of Foreign Connections: not required for national labs, DOE says we may omit the appendix in its entirety or use the boilerplate below
+The applicant institution is a U.S. National Laboratory and is thus exempt from disclosure. There are no subrecipients.
 
 \clearpage
 \section{Other Attachments}\label{sec:other}
